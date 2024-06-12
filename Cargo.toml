@@ -1,6 +1,13 @@
 [package]
 name = "kvs"
 version = "0.1.0"
+authors = ["Brian Anderson <fakeluziyan@gmail.com>"]
+description = "A key-value store"
 edition = "2021"
 
 [dependencies]
+clap = "3.1.18"
+
+[dev-dependencies]
+assert_cmd = "2.0.4"
+predicates = "2.1.0"
