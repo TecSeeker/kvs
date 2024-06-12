@@ -1,1 +1,2 @@
 # kvs
+This project is my own implementation of the Rust courses in the [talent-plan](https://github.com/pingcap/talent-plan). I have created a separate branch for each project to manage them individually, which helps in tracking my progress.
