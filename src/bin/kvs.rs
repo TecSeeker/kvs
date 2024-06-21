@@ -1,9 +1,11 @@
 use clap::{App, Arg, SubCommand};
+use kvs::{KvStore, Result};
+use std::process::exit;
 
-fn main() {
+fn main() -> Result<()> {
     let matches = App::new("kvs")
         .version(env!("CARGO_PKG_VERSION"))
-        .author("Your Name <you@example.com>")
+        .author("TecSeeker <fakeluziyan@gmail.com>")
         .about("A simple key-value store")
         .subcommand(
             SubCommand::with_name("set")
@@ -23,23 +25,33 @@ fn main() {
         )
         .get_matches();
 
+    let mut store = KvStore::open(std::env::current_dir()?)?;
+
     match matches.subcommand() {
-        Some(("set", _)) => {
-            eprintln!("unimplemented");
-            std::process::exit(1);
+        Some(("set", matches)) => {
+            let key = matches.value_of("KEY").unwrap().to_string();
+            let value = matches.value_of("VALUE").unwrap().to_string();
+            store.set(key, value)?;
         }
-        Some(("get", _)) => {
-            eprintln!("unimplemented");
-            std::process::exit(1);
+        Some(("get", matches)) => {
+            let key = matches.value_of("KEY").unwrap().to_string();
+            match store.get(key)? {
+                Some(value) => println!("{}", value),
+                None => println!("Key not found"),
+            }
         }
-        Some(("rm", _)) => {
-            eprintln!("unimplemented");
-            std::process::exit(1);
+        Some(("rm", matches)) => {
+            let key = matches.value_of("KEY").unwrap().to_string();
+            if let Err(e) = store.remove(key) {
+                println!("{}", e);
+                exit(1);
+            }
         }
-        None => {
+        _ => {
             eprintln!("No command provided");
-            std::process::exit(1);
+            exit(1);
         }
-        _ => unreachable!(), // 捕获所有其他未定义子命令
     }
+
+    Ok(())
 }
